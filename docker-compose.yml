@@ -1,0 +1,19 @@
+version: '2'
+services:
+  app:
+    build: .
+    volumes:
+      - ./app:/usr/src/app
+    ports:
+      - "3000:3000"
+    links:
+      - db
+    environment:
+      PORT: 3000
+    env_file:
+      - ./app/config/app.env
+  db:
+    image: mongo
+    ports:
+      - "27017:27017"
+      
