@@ -13,7 +13,3 @@ services:
       DB_CONNECT: db/api_a
   db:
     image: mongo
-#    command: use api
-    ports:
-      - "27017:27017"
-      
