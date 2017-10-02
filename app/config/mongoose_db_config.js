@@ -1,14 +1,21 @@
 var mongoose = require('mongoose');
+console.log( 'mongodb://' + process.env.DB_CONNECT);
+const dbConfig = 'mongodb://' + process.env.DB_CONNECT;
 
-mongoose.connect(process.env.DB_CONNECT);
+mongoose.connect(dbConfig);
+let db = mongoose.connection;
 
-mongoose.connection.on('error',(err)=>
+db.on('error',(err)=>
 {
     console.error('Database Connection Error: ' + err);
     process.exit(1);
 });
 
-mongoose.connection.on('connected',()=>
+db.on('connected',()=>
 {
     console.info('Succesfully connected to MongoDB Database');
+});
+
+db.once('open', function callback () {
+    console.info("Connected to DB!");
 });

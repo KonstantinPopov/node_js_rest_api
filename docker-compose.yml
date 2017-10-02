@@ -10,10 +10,10 @@ services:
       - db
     environment:
       PORT: 3000
-    env_file:
-      - ./app/config/app.env
+      DB_CONNECT: db/api_a
   db:
     image: mongo
+#    command: use api
     ports:
       - "27017:27017"
       
