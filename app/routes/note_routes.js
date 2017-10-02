@@ -1,19 +1,26 @@
+const controller = require("../controllers/notes");
 
-module.exports = function(app, db) {
+function handle(app) {
 
     app.get('/notes', (req, res) => {
-        res.send('Got a GET request');
+        controller.getNotes(req, res);
+    });
+
+    app.get('/notes/:id', (req, res) => {
+        controller.getNoteById(req, res);
     });
 
     app.post('/notes', (req, res) => {
-        res.send('Got a POST request create new Note');
+        controller.createNote(req, res);
     });
 
-    app.put('/notes', (req, res) => {
-        res.send('Got a PUT request edit note');
+    app.put('/notes/:id', (req, res) => {
+        controller.editNote(req, res);
     });
 
-    app.delete('/notes', (req, res) => {
-        res.send('delete note');
+    app.delete('/notes/:id', (req, res) => {
+        controller.deleteNote(req, res);
     });
-};
+}
+
+module.exports = {handle};

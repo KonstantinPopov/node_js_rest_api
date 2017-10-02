@@ -1,6 +1,9 @@
-
 var noteRoutes = require('./note_routes');
 
-module.exports = function(app, db) {
-    noteRoutes(app, db);
+function route(app, db) {
+    noteRoutes.handle(app, db);
+}
+
+module.exports = {
+    route: route
 };
