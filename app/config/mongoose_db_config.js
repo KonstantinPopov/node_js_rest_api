@@ -1,5 +1,4 @@
-var mongoose = require('mongoose');
-console.log( 'mongodb://' + process.env.DB_CONNECT);
+const mongoose = require('mongoose');
 const dbConfig = 'mongodb://' + process.env.DB_CONNECT;
 
 mongoose.connect(dbConfig);

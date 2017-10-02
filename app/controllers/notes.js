@@ -1,29 +1,33 @@
 var models = require("../models");
 
 function getNotes(req, res) {
-    models.Note.find({}, function(err, notes) {
+    Promise.resolve().then(() => {
+        return models.Note.find({}, function(err, notes) {})
+    }).then((notes) => {
         let noteMap = {};
-        if (err) {
-            res.send({status: 'Error', error: err.message});
-        } else {
-            notes.forEach(function(note) {
-                noteMap[note._id] = {note: note.value, date: note.date};
-            });
-            res.send({status: 'Success', data: noteMap});
-        }
+        notes.forEach(function(note) {
+            noteMap[note._id] = {note: note.value, date: note.date};
+        });
+
+        return noteMap;
+    }).then((noteMap) => {
+        res.send({status: 'Success', data: noteMap});
+    }).catch(function (error) {
+        res.send({status: 'Error', error: error.message});
     });
 }
 
 function getNoteById(req, res) {
     let id = req.params.id;
-    models.Note.findOne({_id: id}, function(err, note) {
-        if (err) {
-            res.send({status: 'Error', error: err.message});
-        } else {
-            res.send({status: 'Success', data: {note: note.value, date: note.date}});
-        }
+    let promise = new Promise((resolve) => {
+        return resolve(models.Note.findOne({_id: id}, function(err, note) {}))
+    }).then(note => {
+        res.send({status: 'Success', data: {note: note.value, date: note.date}});
+    }).catch(function (error) {
+        res.send({status: 'Error', error: error.message});
     });
 }
+
 function createNote(req, res) {
     if ((req.headers['content-type'] || 'application/json') !== 'application/json') {
         let contentType = req.headers['content-type'];
