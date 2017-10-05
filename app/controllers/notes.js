@@ -20,11 +20,25 @@ function getNotes(req, res) {
 function getNoteById(req, res) {
     let id = req.params.id;
     let promise = new Promise((resolve) => {
+
         return resolve(models.Note.findOne({_id: id}, function(err, note) {}))
     }).then(note => {
         res.send({status: 'Success', data: {note: note.value, date: note.date}});
     }).catch(function (error) {
         res.send({status: 'Error', error: error.message});
+    });
+}
+
+function deleteNote(req, res) {
+    let id =  req.params.id;
+    models.Note.findOne({_id: id}, function(err, note) {
+        note.remove(function (err) {
+            if (err) {
+                res.send({status: 'Error', error: err});
+            } else {
+                res.send({status: 'Success'});
+            }
+        });
     });
 }
 
@@ -40,7 +54,6 @@ function createNote(req, res) {
         if (err) {
             res.send({status: 'Error', error: err});
         } else {
-            console.log('Saved data ' + JSON.stringify(note));
             res.send({status: 'Success', id: note.id});
         }
     });
@@ -63,19 +76,6 @@ function editNote(req, res) {
             }
         });
         res.send({status: 'Success'});
-    });
-}
-
-function deleteNote(req, res) {
-    let id =  req.params.id;
-    models.Note.findOne({_id: id}, function(err, note) {
-        note.remove(function (err) {
-            if (err) {
-                res.send({status: 'Error', error: err});
-            } else {
-                res.send({status: 'Success'});
-            }
-        });
     });
 }
 
