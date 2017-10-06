@@ -13,10 +13,6 @@ app.set('port', process.env.PORT || PORT);
 var route =  require('./routes/index');
 
 route.route(app);
-
-// var promise = new Promise(function(resolve, reject) {
-// })
-
 var server = app.listen(app.get('port'), function() {
     console.log('Server started. Listen on port ' + server.address().port);
 });
