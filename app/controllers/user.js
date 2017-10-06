@@ -27,8 +27,10 @@ function addFriendsController(req, res) {
 
         return Promise.all(userSavePromises);
     })
-    .then(() => {res.json({status:'Success'})})
-    .catch(error => {res.json({status:'Error', error: error.message})});
+    .then(() => res.json({status:'Success'}))
+    .catch(error => {
+        res.json({status:'Error', error: error.message})
+     });
 };
 
 function getUserFriensController(req, res) {
@@ -38,12 +40,12 @@ function getUserFriensController(req, res) {
                 let friends = user.friends;
                 var foundsUser = [];
                 if (friends.lenght !== 0) {
-                    foundsUser = friends.map(friend => findUsers(friend.user_id)); 
+                    foundsUser = friends.map(friend => findUsers(friend)); 
                 }
             return Promise.all(foundsUser);
         })
         .then(friends => {
-            friends = friends.map(friend => {return {id:friend._id, name:friend.fullName}});
+            // friends = friends.map(friend => {return {id:friend._id, name:friend.fullName}});
             {res.json({status:'Success', data: friends})}
         })
         .catch(error => res.json({status:'Error', error: error.message}));
@@ -120,31 +122,40 @@ function createNewUser(user) {
 
 function addFriend(friend, user) {
     return new Promise(function(resolve, reject) {
-        let friendsOfUser = user.friends;
-        let friendsOfFriend = friend.friends;
-
-        let friendId = friend.id;
-        let userId = user.id;
-        if (userId === friendId) {
+        if (user._id === friend._id) {
             reject('You try add yourself to friends');
+            return;
         }
-        if (friendsOfUser.findIndex(element => element.user_id === friendId) === -1) {
-            friendsOfUser.push({user_id: friendId, name: friend.fullName});
-        }
-        if (friendsOfFriend.findIndex(element => element.user_id === userId) === -1) {
-            friendsOfFriend.push({user_id: userId, name: friend.fullName});
-        }
-        user.save(function (err) {
-            if (err) {
-                reject(err.message);
-            }
-        })
-        friend.save(function (err) {
-            if (err) {
-                reject(err.message);
-            }
-        })
-        resolve();
+        if (user.friends.findIndex(element => element.toString() === friend.id) === -1) {
+            user.friends.push(friend);
+        } 
+        if (friend.friends.findIndex(element => element.toString() === user.id) === -1) {
+            friend.friends.push(user);
+        } 
+
+        user.save()
+            .then(() => {
+                return friend.save().then(() => {resolve()});
+            })
+            .catch((error) => {
+                reject(new Error(error._message)); 
+            });
+
+            // user.save(error => {
+            //     if (error) {
+            //         reject(new Error(error._message));
+            //     } else {
+            //         user.save(error => {
+            //             if (error) {
+            //                 reject(new Error(error._message));
+            //             } else {
+            //                 resolve();
+            //             }
+            //         })
+            //     }
+            // });
+
+
     });
 }
 

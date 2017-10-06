@@ -8,7 +8,7 @@ var userSchema = new Schema({
     lastName:{
         type: String
     },
-    friends: []
+    friends: [{ type: Schema.ObjectId, ref: 'User'}]
 });
 
 userSchema.virtual('fullName').get(function () {
